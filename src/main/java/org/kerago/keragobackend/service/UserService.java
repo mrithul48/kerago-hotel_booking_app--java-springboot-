@@ -8,6 +8,7 @@ import org.kerago.keragobackend.exception.ResourceNotFoundException;
 import org.kerago.keragobackend.model.Users;
 import org.kerago.keragobackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,8 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public UserResponse userRegister(UserRegister userRegister) {
 
@@ -33,7 +36,7 @@ public class UserService {
         Users users = new Users();
         users.setUsername(userRegister.username());
         users.setEmail(userRegister.email());
-        users.setPassword(userRegister.password());
+        users.setPassword(passwordEncoder.encode(userRegister.password()));
         users.setPhone(userRegister.phone());
         users.setRole(Role.ROLE_USER);
         users.setCreated(LocalDateTime.now());
@@ -41,6 +44,7 @@ public class UserService {
         Users newUser = userRepository.save(users);
 
         return new UserResponse(
+                newUser.getId(),
                 newUser.getUsername(),
                 newUser.getEmail(),
                 newUser.getRole(),
@@ -51,6 +55,7 @@ public class UserService {
     public UserResponse getUserById(Long id) {
         Users users = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found with id :" + id));
         return new UserResponse(
+                users.getId(),
                 users.getUsername(),
                 users.getEmail(),
                 users.getRole(),
@@ -79,7 +84,7 @@ public class UserService {
 
     public List<UserResponse> getAllUser() {
         List<Users> allUsers = userRepository.findAll();
-        return allUsers.stream().map(users -> new UserResponse(users.getUsername(), users.getEmail(), users.getRole(),users.getBookings())).toList();
+        return allUsers.stream().map(users -> new UserResponse(users.getId(),users.getUsername(), users.getEmail(), users.getRole(),users.getBookings())).toList();
     }
 
 
@@ -89,6 +94,7 @@ public class UserService {
         userRepository.delete(users);
 
         return new UserResponse(
+                users.getId(),
                 users.getUsername(),
                 users.getEmail(),
                 users.getRole(),

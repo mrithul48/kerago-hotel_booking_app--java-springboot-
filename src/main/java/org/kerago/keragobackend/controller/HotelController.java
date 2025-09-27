@@ -20,7 +20,7 @@ public class HotelController {
     @Autowired
     HotelService hotelService;
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<HotelResponse> hotelRegister(@Valid @RequestBody HotelRequest hotelRequest) {
         HotelResponse hotelResponse = hotelService.hotelRegister(hotelRequest);
         if (hotelResponse != null) {

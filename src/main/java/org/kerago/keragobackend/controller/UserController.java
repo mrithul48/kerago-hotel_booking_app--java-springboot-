@@ -19,8 +19,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/register")
+        @PostMapping("/register")
     public ResponseEntity<UserResponse> userRegister(@Valid @RequestBody UserRegister userRegister) {
+
         UserResponse userResponse = userService.userRegister(userRegister);
         if (userResponse != null) {
             return new ResponseEntity<>(userResponse, HttpStatus.CREATED);

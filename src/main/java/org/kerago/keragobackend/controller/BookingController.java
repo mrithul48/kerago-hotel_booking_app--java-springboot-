@@ -13,6 +13,4 @@ public class BookingController {
     @Autowired
     BookingService bookingService;
 
-
-
 }

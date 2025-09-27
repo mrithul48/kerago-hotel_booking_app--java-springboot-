@@ -29,6 +29,7 @@ public class HotelService {
         Hotel newHotel = hotelRepository.save(hotel);
 
         return new HotelResponse(
+                newHotel.getId(),
                 newHotel.getName(),
                 newHotel.getLocation(),
                 newHotel.getRentPerNight(),
@@ -41,6 +42,7 @@ public class HotelService {
     public List<HotelResponse> getAllHotels() {
         List<Hotel> hotels = hotelRepository.findAll();
         return hotels.stream().map(hotel -> new HotelResponse(
+                hotel.getId(),
                 hotel.getName(),
                 hotel.getLocation(),
                 hotel.getRentPerNight(),
@@ -53,6 +55,7 @@ public class HotelService {
     public HotelResponse getHotelById(Long id) {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("hotel not found"));
         return new HotelResponse(
+                hotel.getId(),
                 hotel.getName(),
                 hotel.getLocation(),
                 hotel.getRentPerNight(),
@@ -73,6 +76,7 @@ public class HotelService {
                     hotelRepository.save(hotel);
 
                     return new HotelResponse(
+                            hotel.getId(),
                             hotel.getName(),
                             hotel.getLocation(),
                             hotel.getRentPerNight(),
@@ -88,6 +92,7 @@ public class HotelService {
         hotelRepository.delete(hotel);
 
         return new HotelResponse(
+                hotel.getId(),
                 hotel.getName(),
                 hotel.getLocation(),
                 hotel.getRentPerNight(),

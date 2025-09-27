@@ -6,6 +6,7 @@ import org.kerago.keragobackend.model.Booking;
 import java.util.Set;
 
 public record UserResponse(
+        Long userId,
         String username,
         String email,
         Role role,

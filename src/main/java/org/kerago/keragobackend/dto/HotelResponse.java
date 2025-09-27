@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 public record HotelResponse(
+        Long hotelId,
         String name,
         String location,
         BigDecimal rentPerNight,
