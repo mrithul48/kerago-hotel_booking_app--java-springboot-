@@ -63,22 +63,18 @@ public class UserService {
         );
     }
 
-    public UserRegister updateUserDetails(UserRegister userRegister, Long id) {
-        return userRepository.findById(id)
-                .map(users -> {
-                    users.setUsername(userRegister.username());
-                    users.setPassword(userRegister.password());
-                    users.setEmail(userRegister.email());
-                    users.setPhone(userRegister.phone());
-                    userRepository.save(users);
-
-                    return new UserRegister(
-                            users.getUsername(),
-                            users.getEmail(),
-                            users.getPassword(),
-                            users.getPhone());
-                })
+    public UserResponse updateUserDetails(UserRegister userRegister, Long id) {
+        Users users = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
+
+        users.setUsername(userRegister.username());
+        users.setPassword(passwordEncoder.encode(userRegister.password()));
+        users.setEmail(userRegister.email());
+        users.setPhone(userRegister.phone());
+
+        Users saved = userRepository.save(users);
+
+        return new UserResponse(saved.getId(),saved.getUsername(), saved.getEmail(),saved.getRole());
     }
 
 

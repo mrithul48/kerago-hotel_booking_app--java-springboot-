@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-        @PostMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> userRegister(@Valid @RequestBody UserRegister userRegister) {
 
         UserResponse userResponse = userService.userRegister(userRegister);
@@ -41,8 +41,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserRegister> updateUserDetails(@RequestBody UserRegister userRegister, @PathVariable Long id) {
-        UserRegister updateuserRegister = userService.updateUserDetails(userRegister, id);
+    public ResponseEntity<UserResponse> updateUserDetails(@RequestBody UserRegister userRegister, @PathVariable Long id) {
+        UserResponse updateuserRegister = userService.updateUserDetails(userRegister, id);
         return new ResponseEntity<>(updateuserRegister, HttpStatus.CREATED);
 
     }

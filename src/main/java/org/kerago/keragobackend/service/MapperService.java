@@ -4,7 +4,6 @@ import org.kerago.keragobackend.dto.RoomResponse;
 import org.kerago.keragobackend.model.Rooms;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

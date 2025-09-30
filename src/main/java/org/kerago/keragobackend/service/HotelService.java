@@ -51,17 +51,6 @@ public class HotelService {
         hotel.setRooms(rooms);
         Hotel savedHotel = hotelRepository.save(hotel);
 
-        // Map Rooms -> RoomResponse
-//        Set<RoomResponse> roomResponses = new HashSet<>();
-//        savedHotel.getRooms().stream().map(
-//                r->new RoomResponse(
-//                        r.getId(),
-//                        r.getRoomTypes(),
-//                        r.getPricePerNight(),
-//                        r.getRoomQuantity()
-//                )
-//        ).collect(Collectors.toSet());
-
         return new HotelResponse(
                 savedHotel.getId(),
                 savedHotel.getName(),

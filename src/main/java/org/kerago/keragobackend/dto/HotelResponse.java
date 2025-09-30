@@ -1,8 +1,6 @@
 package org.kerago.keragobackend.dto;
 
-import org.kerago.keragobackend.model.Booking;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 public record HotelResponse(

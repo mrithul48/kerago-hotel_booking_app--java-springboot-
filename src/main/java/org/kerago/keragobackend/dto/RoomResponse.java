@@ -8,7 +8,7 @@ public record RoomResponse(
         Long id,
         RoomTypes roomTypes,
         BigDecimal pricePerNight,
-        Integer roomAvailableQuantity
+        Integer roomBookingQuantity
 
 
 

@@ -1,0 +1,33 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmed</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { padding: 16px; }
+        .btn { display:inline-block; padding:10px 16px; border-radius:6px;
+               background:#1a73e8; color:#fff; text-decoration:none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Hi <span th:text="${username}">User</span>, your booking is confirmed!</h2>
+
+    <p>Hotel: <strong th:text="${hotelName}">Hotel Name</strong></p>
+    <p>Check-in: <strong th:text="${checkIn}">2025-10-01</strong></p>
+    <p>Check-out: <strong th:text="${checkOut}">2025-10-03</strong></p>
+    <p>Total price: <strong th:text="${totalPrice}">₹0.00</strong></p>
+
+    <h4>Rooms</h4>
+    <ul>
+        <li th:each="r : ${rooms}">
+            <span th:text="${r.roomType}">Deluxe</span> —
+            <span th:text="${r.qty}">1</span> x ₹<span th:text="${r.price}">0</span>
+        </li>
+    </ul>
+
+    <p><a th:href="${bookingUrl}" class="btn">View Booking</a></p>
+</div>
+</body>
+</html>

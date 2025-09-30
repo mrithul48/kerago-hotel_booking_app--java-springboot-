@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                         request
                                 //swagger
-                                .requestMatchers( "/api/auth/",
+                                .requestMatchers("/api/auth/",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/swagger-resources/**",
@@ -44,7 +44,7 @@ public class SecurityConfig {
                                 ).permitAll()                                //LOGIN
                                 .requestMatchers(HttpMethod.POST, "/v1/auth/login").permitAll()
                                 //BOOKING
-                                .requestMatchers(HttpMethod.POST,"/v1/booking/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/v1/booking/**").authenticated()
                                 //USERS
                                 .requestMatchers(HttpMethod.POST, "/v1/users/**").permitAll()
                                 //HOTEL
@@ -52,7 +52,7 @@ public class SecurityConfig {
 
 
                                 .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
     }

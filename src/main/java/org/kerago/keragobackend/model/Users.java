@@ -52,10 +52,6 @@ public class Users {
     @OneToMany(mappedBy = "user",orphanRemoval = true,cascade = CascadeType.ALL)
     private Set<Booking> bookings =  new HashSet<>();
 
-    @OneToMany(mappedBy = "user",orphanRemoval = true,cascade = CascadeType.ALL)
-    private List<Review> reviewList = new ArrayList<>();
-
-
     public Users(Long i) {
         this.id = i;
     }

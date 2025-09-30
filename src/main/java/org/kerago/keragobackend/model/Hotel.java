@@ -43,6 +43,4 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel",orphanRemoval = true,cascade = CascadeType.ALL)
     private List<Images> imagesList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "hotel",orphanRemoval = true,cascade = CascadeType.ALL)
-    private List<Review> reviewList = new ArrayList<>();
 }

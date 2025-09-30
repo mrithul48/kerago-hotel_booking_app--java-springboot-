@@ -29,10 +29,12 @@ public class HotelController {
         throw new ResourceNotFoundException("hotel registered UNSUCCESSFULLY");
     }
 
+
     @GetMapping
     public ResponseEntity<List<HotelResponse>> getAllHotels() {
         return ResponseEntity.ok(hotelService.getAllHotels());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<HotelResponse> getHotelById(@PathVariable Long id) {
@@ -40,14 +42,16 @@ public class HotelController {
         return new ResponseEntity<>(hotelResponse, HttpStatus.OK);
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<HotelResponse> updateHotel(@PathVariable Long id,@RequestBody HotelRequest hotelRequest) {
-      HotelResponse hotelResponse = hotelService.updateHotel(id,hotelRequest);
-      return new ResponseEntity<>(hotelResponse,HttpStatus.OK);
+    public ResponseEntity<HotelResponse> updateHotel(@PathVariable Long id, @RequestBody HotelRequest hotelRequest) {
+        HotelResponse hotelResponse = hotelService.updateHotel(id, hotelRequest);
+        return new ResponseEntity<>(hotelResponse, HttpStatus.OK);
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<HotelResponse> deleteHotel(@PathVariable Long id){
-      return ResponseEntity.ok( hotelService.deleteHotel(id));
+    public ResponseEntity<HotelResponse> deleteHotel(@PathVariable Long id) {
+        return ResponseEntity.ok(hotelService.deleteHotel(id));
     }
 }

@@ -7,12 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.kerago.keragobackend.enums.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,13 +38,11 @@ public class Booking {
 
     private BigDecimal totalPrice;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate checkIn;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate checkOut;
 

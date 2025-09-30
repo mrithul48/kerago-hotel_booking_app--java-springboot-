@@ -1,3 +1,5 @@
+
+
 package org.kerago.keragobackend.service;
 
 import org.kerago.keragobackend.dto.BookingRequest;
@@ -16,12 +18,10 @@ import org.kerago.keragobackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BookingService {
@@ -35,6 +35,10 @@ public class BookingService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    MailService mailService;
+
+    @Transactional
     public BookingResponse createBooking(BookingRequest bookingRequest, Authentication authentication) {
 
         // Fetch hotel
@@ -47,9 +51,20 @@ public class BookingService {
 
         // Check hotel availability
         boolean unAvailable = hotel.getRooms().stream().allMatch(rooms -> rooms.getRoomAvailableQuantity() <= 0);
-
         if (unAvailable) {
             throw new ResourceNotFoundException("no room available in hotel");
+        }
+
+        if (bookingRequest.room().stream().allMatch(r -> r.roomBookingQuantity() <= 0)) {
+            throw new ResourceNotFoundException("booking quantity cannot be 0");
+        }
+
+        // Validate dates
+        if (bookingRequest.checkIn() == null || bookingRequest.checkOut() == null) {
+            throw new ResourceNotFoundException("check-in and check-out dates are required");
+        }
+        if (!bookingRequest.checkOut().isAfter(bookingRequest.checkIn())) {
+            throw new ResourceNotFoundException("check-out must be after check-in");
         }
 
         // Create booking
@@ -72,18 +87,26 @@ public class BookingService {
                     .findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException("requested room not available"));
 
-            if (hotelRoom.getRoomAvailableQuantity() < roomRequest.roomBookingQuantity()) {
+            // Calculate already booked rooms for the requested date range
+            Integer alreadyBooked = bookingRepository.countBookedRoomsForTypeAndDates(
+                    hotel.getId(),
+                    roomRequest.roomTypes(),
+                    bookingRequest.checkIn(),
+                    bookingRequest.checkOut()
+            );
+
+            int availableForDates = hotelRoom.getRoomAvailableQuantity() - alreadyBooked;
+            if (availableForDates < roomRequest.roomBookingQuantity()) {
                 throw new ResourceNotFoundException("Not enough rooms available for type:" + roomRequest.roomTypes());
             }
 
-            // Reduce hotel room quantity
-            hotelRoom.setRoomAvailableQuantity(hotelRoom.getRoomAvailableQuantity() - roomRequest.roomBookingQuantity());
-
+            // Decrease available quantity for this room type immediately
+            hotelRoom.setRoomAvailableQuantity(
+                    hotelRoom.getRoomAvailableQuantity() - roomRequest.roomBookingQuantity()
+            );
 
             // Create booked room
             Rooms bookedRoom = new Rooms();
-
-
             bookedRoom.setRoomBookingQuantity(roomRequest.roomBookingQuantity());
             bookedRoom.setRoomTypes(roomRequest.roomTypes());
             bookedRoom.setBooking(booking); // link to booking
@@ -93,11 +116,7 @@ public class BookingService {
             // Update total price
             totalPrice = totalPrice.add(hotelRoom.getPricePerNight()
                     .multiply(BigDecimal.valueOf(roomRequest.roomBookingQuantity())));
-
         }
-
-        // Save updated hotel room quantities
-        hotelRepository.save(hotel);
 
         // Set rooms and total price in booking
         booking.setBookedRooms(bookedRooms);
@@ -105,6 +124,34 @@ public class BookingService {
 
         // Save booking
         Booking saveBooking = bookingRepository.save(booking);
+
+        // Prepare mail variables AFTER booking is saved
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("username", saveBooking.getUser().getUsername());
+        vars.put("hotelName", saveBooking.getHotel().getName());
+        vars.put("checkIn", saveBooking.getCheckIn().toString());
+        vars.put("checkOut", saveBooking.getCheckOut().toString());
+        vars.put("totalPrice", saveBooking.getTotalPrice().toString());
+
+        List<Map<String, Object>> rooms = saveBooking.getBookedRooms().stream()
+                .map(r -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("roomType", r.getRoomTypes());
+                    m.put("qty", r.getRoomBookingQuantity());
+                    m.put("price", r.getPricePerNight());
+                    return m;
+                }).toList();
+
+        vars.put("rooms", rooms);
+        vars.put("bookingUrl", "https://yourapp.com/bookings/" + saveBooking.getId());
+
+        // Send HTML mail with Thymeleaf template
+        mailService.sendHtmlMessage(
+                saveBooking.getUser().getEmail(),
+                "Booking Confirmed — Kerago",
+                "booking-confirmation", // template under mail-templates/
+                vars
+        );
 
         // Prepare room response
         List<RoomResponse> room = new ArrayList<>();
@@ -130,6 +177,6 @@ public class BookingService {
                 saveBooking.getTotalPrice(),
                 room
         );
-
     }
 }
+
