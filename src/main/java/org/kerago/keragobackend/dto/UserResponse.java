@@ -9,7 +9,7 @@ public record UserResponse(
         Long userId,
         String username,
         String email,
-        Role role,
-        Set<Booking> bookings
+        Role role
+
 ) {
 }

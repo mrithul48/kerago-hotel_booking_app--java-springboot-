@@ -1,13 +1,11 @@
 package org.kerago.keragobackend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,14 +26,15 @@ public class Hotel {
 
     private String location;
 
-    private BigDecimal rentPerNight;
-
     private String description;
 
-    private Integer roomAvailability;
+
+    @OneToMany(mappedBy = "hotel",orphanRemoval = true,cascade = CascadeType.ALL)
+    private Set<Rooms> rooms = new HashSet<>();
 
     @CreationTimestamp
     @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "hotel",orphanRemoval = true,cascade = CascadeType.ALL)

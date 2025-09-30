@@ -9,9 +9,8 @@ public record HotelResponse(
         Long hotelId,
         String name,
         String location,
-        BigDecimal rentPerNight,
         String description,
-        Integer roomAvailability,
-        Set<Booking> bookingList
+        Set<RoomResponse> room
+
 ) {
 }

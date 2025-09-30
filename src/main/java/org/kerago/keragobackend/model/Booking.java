@@ -1,5 +1,6 @@
 package org.kerago.keragobackend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,11 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.kerago.keragobackend.enums.Status;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -30,21 +35,30 @@ public class Booking {
     @JoinColumn(name = "hotel_id",nullable = false)
     private Hotel hotel;
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Rooms> bookedRooms = new HashSet<>();
+
+    private BigDecimal totalPrice;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime checkIn;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate checkIn;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime checkOut;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate checkOut;
 
     @Max(value = 2, message = "Guests cannot be more than 2")
-    @Column(nullable = true)
     private Integer guests;
+
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
+
+
+
 
 
 }

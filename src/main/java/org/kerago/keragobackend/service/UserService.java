@@ -47,8 +47,8 @@ public class UserService {
                 newUser.getId(),
                 newUser.getUsername(),
                 newUser.getEmail(),
-                newUser.getRole(),
-                newUser.getBookings()
+                newUser.getRole()
+
         );
     }
 
@@ -58,8 +58,8 @@ public class UserService {
                 users.getId(),
                 users.getUsername(),
                 users.getEmail(),
-                users.getRole(),
-                users.getBookings()
+                users.getRole()
+
         );
     }
 
@@ -84,7 +84,7 @@ public class UserService {
 
     public List<UserResponse> getAllUser() {
         List<Users> allUsers = userRepository.findAll();
-        return allUsers.stream().map(users -> new UserResponse(users.getId(),users.getUsername(), users.getEmail(), users.getRole(),users.getBookings())).toList();
+        return allUsers.stream().map(users -> new UserResponse(users.getId(),users.getUsername(), users.getEmail(), users.getRole())).toList();
     }
 
 
@@ -97,8 +97,8 @@ public class UserService {
                 users.getId(),
                 users.getUsername(),
                 users.getEmail(),
-                users.getRole(),
-                users.getBookings()
+                users.getRole()
+
         );
     }
 
