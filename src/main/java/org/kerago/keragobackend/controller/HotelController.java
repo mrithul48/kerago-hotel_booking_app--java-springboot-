@@ -5,12 +5,18 @@ import jakarta.validation.Valid;
 import org.kerago.keragobackend.dto.HotelRequest;
 import org.kerago.keragobackend.dto.HotelResponse;
 import org.kerago.keragobackend.exception.ResourceNotFoundException;
+import org.kerago.keragobackend.model.Images;
+import org.kerago.keragobackend.service.CloudinaryService;
 import org.kerago.keragobackend.service.HotelService;
+import org.kerago.keragobackend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,9 +26,16 @@ public class HotelController {
     @Autowired
     HotelService hotelService;
 
-    @PostMapping("/register")
-    public ResponseEntity<HotelResponse> hotelRegister(@Valid @RequestBody HotelRequest hotelRequest) {
-        HotelResponse hotelResponse = hotelService.hotelRegister(hotelRequest);
+    @Autowired
+    ImageService imageService;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<HotelResponse> hotelRegister(@Valid @RequestPart("hotelRequest") HotelRequest hotelRequest, @RequestPart(value = "file") MultipartFile file) throws IOException {
+        String url = cloudinaryService.uploadFile(file);
+        HotelResponse hotelResponse = hotelService.hotelRegister(hotelRequest, url);
         if (hotelResponse != null) {
             return new ResponseEntity<>(hotelResponse, HttpStatus.CREATED);
         }
@@ -54,4 +67,6 @@ public class HotelController {
     public ResponseEntity<HotelResponse> deleteHotel(@PathVariable Long id) {
         return ResponseEntity.ok(hotelService.deleteHotel(id));
     }
+
+
 }

@@ -10,7 +10,5 @@ public record RoomResponse(
         BigDecimal pricePerNight,
         Integer roomBookingQuantity
 
-
-
 ) {
 }

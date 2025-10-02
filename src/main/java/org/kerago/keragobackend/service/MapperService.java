@@ -1,9 +1,13 @@
 package org.kerago.keragobackend.service;
 
+import org.kerago.keragobackend.dto.ImageResponse;
 import org.kerago.keragobackend.dto.RoomResponse;
+import org.kerago.keragobackend.dto.adminDTO.RoomAdminRequest;
+import org.kerago.keragobackend.model.Images;
 import org.kerago.keragobackend.model.Rooms;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,5 +29,19 @@ public class MapperService {
         return rooms.stream()
                 .map(this::mapToRoomResponse)
                 .collect(Collectors.toSet());
+    }
+
+    public List<ImageResponse> mapToImageResponseList(List<Images> imagesList) {
+        return imagesList.stream().map(images -> new ImageResponse(images.getId(),images.getUrl())).toList();
+
+    }
+
+
+    public Set<RoomAdminRequest> mapToRoomAdminRequest(Set<Rooms> rooms){
+        return rooms.stream().map(room->new RoomAdminRequest(
+                room.getRoomTypes(),
+                room.getRoomAvailableQuantity(),
+                room.getPricePerNight()
+        )).collect(Collectors.toSet());
     }
 }

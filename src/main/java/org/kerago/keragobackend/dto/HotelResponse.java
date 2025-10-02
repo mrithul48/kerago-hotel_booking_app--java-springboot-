@@ -1,6 +1,9 @@
 package org.kerago.keragobackend.dto;
 
 
+import org.kerago.keragobackend.dto.adminDTO.RoomAdminRequest;
+
+import java.util.List;
 import java.util.Set;
 
 public record HotelResponse(
@@ -8,7 +11,8 @@ public record HotelResponse(
         String name,
         String location,
         String description,
-        Set<RoomResponse> room
+        Set<RoomAdminRequest> room,
+        List<ImageResponse> imageList
 
 ) {
 }

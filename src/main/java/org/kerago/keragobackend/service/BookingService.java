@@ -2,10 +2,7 @@
 
 package org.kerago.keragobackend.service;
 
-import org.kerago.keragobackend.dto.BookingRequest;
-import org.kerago.keragobackend.dto.BookingResponse;
-import org.kerago.keragobackend.dto.RoomRequest;
-import org.kerago.keragobackend.dto.RoomResponse;
+import org.kerago.keragobackend.dto.*;
 import org.kerago.keragobackend.enums.Status;
 import org.kerago.keragobackend.exception.ResourceNotFoundException;
 import org.kerago.keragobackend.model.Booking;
@@ -17,6 +14,7 @@ import org.kerago.keragobackend.repository.HotelRepository;
 import org.kerago.keragobackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -177,6 +175,42 @@ public class BookingService {
                 saveBooking.getTotalPrice(),
                 room
         );
+    }
+
+
+    public BookingCancelResponse cancelBooking(String username, Long bookingId) {
+        Users users = userRepository.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("username not found"));
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(()->new UsernameNotFoundException("booking not found"));
+
+        if(!booking.getUser().getUsername().equals(username)){
+            throw new UsernameNotFoundException("You are not allowed to cancel this booking");
+        }
+
+        for (Rooms bookedRoom:booking.getBookedRooms()){
+            Hotel hotel = booking.getHotel();
+            Rooms hotelRoom = hotel.getRooms()
+                    .stream().filter(r->r.getRoomTypes().equals(bookedRoom.getRoomTypes()))
+                    .findFirst()
+                    .orElseThrow(()->new ResourceNotFoundException("room type not found in hotel"));
+            hotelRoom.setRoomAvailableQuantity(
+                    hotelRoom.getRoomAvailableQuantity() + bookedRoom.getRoomBookingQuantity()
+            );
+        }
+
+
+        booking.setStatus(Status.CANCELLED);
+        bookingRepository.save(booking);
+
+        return new BookingCancelResponse(
+                booking.getId(),
+                booking.getUser().getUsername(),
+                booking.getHotel().getName(),
+                booking.getStatus()
+        );
+
     }
 }
 
