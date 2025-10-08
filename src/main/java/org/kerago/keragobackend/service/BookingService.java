@@ -2,6 +2,7 @@
 
 package org.kerago.keragobackend.service;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.kerago.keragobackend.dto.*;
 import org.kerago.keragobackend.enums.Status;
 import org.kerago.keragobackend.exception.ResourceNotFoundException;
@@ -35,6 +36,9 @@ public class BookingService {
 
     @Autowired
     MailService mailService;
+
+    @Autowired
+    MapperService mapperService;
 
     @Transactional
     public BookingResponse createBooking(BookingRequest bookingRequest, Authentication authentication) {
@@ -77,6 +81,7 @@ public class BookingService {
         // Prepare booked rooms and total price
         Set<Rooms> bookedRooms = new HashSet<>();
         BigDecimal totalPrice = BigDecimal.ZERO;
+        Long day = mapperService.calculateStayDuration(bookingRequest.checkIn(),bookingRequest.checkOut());
         for (RoomRequest roomRequest : bookingRequest.room()) {
 
             Rooms hotelRoom = hotel.getRooms()
@@ -113,7 +118,7 @@ public class BookingService {
 
             // Update total price
             totalPrice = totalPrice.add(hotelRoom.getPricePerNight()
-                    .multiply(BigDecimal.valueOf(roomRequest.roomBookingQuantity())));
+                    .multiply(BigDecimal.valueOf(roomRequest.roomBookingQuantity()).multiply(BigDecimal.valueOf(day))));
         }
 
         // Set rooms and total price in booking
@@ -212,5 +217,28 @@ public class BookingService {
         );
 
     }
+
+    public List<BookingResponse> getAllBooking() {
+        return bookingRepository.findAll().stream().filter(b -> b.getStatus() != Status.CANCELLED)
+                .map(r ->
+                        new BookingResponse(
+                                r.getId(),
+                                r.getUser().getUsername(),
+                                r.getHotel().getName(),
+                                r.getCheckIn(),
+                                r.getCheckOut(),
+                                r.getStatus(),
+                                r.getGuests(),
+                                r.getTotalPrice(),
+                                r.getBookedRooms().stream().map(room -> new RoomResponse(
+                                        room.getId(),
+                                        room.getRoomTypes(),
+                                        room.getPricePerNight(),
+                                        room.getRoomBookingQuantity()
+                                )).toList()
+                        )
+                ).toList();
+    }
+
 }
 

@@ -1,7 +1,9 @@
 package org.kerago.keragobackend.service;
 
+import jakarta.validation.Valid;
 import org.kerago.keragobackend.dto.UserRegister;
 import org.kerago.keragobackend.dto.UserResponse;
+import org.kerago.keragobackend.dto.adminDTO.UserAdminRequest;
 import org.kerago.keragobackend.enums.Role;
 import org.kerago.keragobackend.exception.ResourceAlreadyExistsException;
 import org.kerago.keragobackend.exception.ResourceNotFoundException;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,7 +41,7 @@ public class UserService {
         users.setEmail(userRegister.email());
         users.setPassword(passwordEncoder.encode(userRegister.password()));
         users.setPhone(userRegister.phone());
-        users.setRole(Role.ROLE_USER);
+        users.setRole(Role.USER);
         users.setCreated(LocalDateTime.now());
 
         Users newUser = userRepository.save(users);
@@ -99,4 +102,25 @@ public class UserService {
     }
 
 
+    public UserResponse adminRegister(UserAdminRequest userAdminRequest) {
+        if (userRepository.existsByEmail(userAdminRequest.email())) {
+            throw new ResourceAlreadyExistsException("user already exist");
+        }
+        Users users = new Users();
+        users.setUsername(userAdminRequest.username());
+        users.setEmail(userAdminRequest.email());
+        users.setPassword(passwordEncoder.encode(userAdminRequest.password()));
+        users.setRole(userAdminRequest.role());
+        users.setCreated(LocalDateTime.now());
+        users.setPhone(userAdminRequest.phone());
+
+        Users saveUsers = userRepository.save(users);
+
+        return new UserResponse(
+                saveUsers.getId(),
+                saveUsers.getUsername(),
+                saveUsers.getEmail(),
+                saveUsers.getRole()
+        );
+    }
 }

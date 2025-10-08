@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -43,24 +45,29 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                         request
                                 //swagger
-                                .requestMatchers("/api/auth/",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/swagger-resources/**",
-                                        "/webjars/**"
-                                ).permitAll()                                //LOGIN
+                                .requestMatchers("/api/auth/", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+
+                                //LOGIN
                                 .requestMatchers(HttpMethod.POST, "/v1/auth/login").permitAll()
-                                //BOOKING
-                                .requestMatchers(HttpMethod.POST, "/v1/booking/**").authenticated()
+
                                 //USERS
                                 .requestMatchers(HttpMethod.POST, "/v1/users/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT,"v1/users/**").permitAll()
+
+                                //BOOKING
+                                .requestMatchers(HttpMethod.POST, "/v1/booking/**").authenticated()
+
                                 //HOTEL
                                 .requestMatchers(HttpMethod.GET, "/v1/hotels/**").permitAll()
+
                                 .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+
+
+
 
     }
 

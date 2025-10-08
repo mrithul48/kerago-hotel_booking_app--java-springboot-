@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/booking")
 public class BookingController {
@@ -32,6 +34,11 @@ public class BookingController {
         String username = jwtUtil.extractUsername(token.substring(7));
         BookingCancelResponse bookingCancelResponse = bookingService.cancelBooking(username,bookingId);
         return ResponseEntity.ok(bookingCancelResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BookingResponse>> getAllBooking(){
+        return ResponseEntity.ok(bookingService.getAllBooking());
     }
 
 

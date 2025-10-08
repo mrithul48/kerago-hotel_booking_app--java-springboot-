@@ -22,7 +22,7 @@ public class CustomerUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users users = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user not found"));
-        return new User(users.getUsername(), users.getPassword(), Collections.singleton(new SimpleGrantedAuthority(users.getRole().name())));
+        return new User(users.getUsername(), users.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_" +users.getRole().name())));
 
     }
 }

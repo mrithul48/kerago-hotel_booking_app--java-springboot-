@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +33,7 @@ public class HotelController {
     @Autowired
     CloudinaryService cloudinaryService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<HotelResponse> hotelRegister(@Valid @RequestPart("hotelRequest") HotelRequest hotelRequest, @RequestPart(value = "file") MultipartFile file) throws IOException {
         String url = cloudinaryService.uploadFile(file);
@@ -55,14 +57,14 @@ public class HotelController {
         return new ResponseEntity<>(hotelResponse, HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<HotelResponse> updateHotel(@PathVariable Long id, @RequestBody HotelRequest hotelRequest) {
         HotelResponse hotelResponse = hotelService.updateHotel(id, hotelRequest);
         return new ResponseEntity<>(hotelResponse, HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HotelResponse> deleteHotel(@PathVariable Long id) {
         return ResponseEntity.ok(hotelService.deleteHotel(id));

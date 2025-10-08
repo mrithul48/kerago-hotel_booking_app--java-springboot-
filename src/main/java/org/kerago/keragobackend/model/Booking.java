@@ -54,7 +54,4 @@ public class Booking {
     private Status status = Status.PENDING;
 
 
-
-
-
 }

@@ -31,7 +31,7 @@ public class Users {
 
     @Email
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String email;
 
     @NotBlank
@@ -43,6 +43,9 @@ public class Users {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private RefreshToken refreshToken;
 
     @CreatedDate
     @Column(updatable = false)
