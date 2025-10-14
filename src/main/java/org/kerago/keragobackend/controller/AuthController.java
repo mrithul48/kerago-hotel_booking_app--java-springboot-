@@ -13,10 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.HashMap;
@@ -63,6 +60,7 @@ public class AuthController {
             response.put("token", token);
             response.put("refreshToken", refreshTokenString);
             response.put("role", role);
+            response.put("username",userDetails.getUsername());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("Error", "invalid user name or password"));
@@ -72,6 +70,21 @@ public class AuthController {
     public ResponseEntity<?> logout(Authentication authentication){
         return ResponseEntity.ok(refreshTokenService.logout(authentication));
     }
+
+//    @PostMapping("/auth/refresh")
+//    public ResponseEntity<?> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+//        if (refreshToken == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No refresh token found");
+//        }
+//
+//        try {
+//            String newAccessToken = refreshTokenService.refreshAccessToken(refreshToken);
+//            return ResponseEntity.ok(Map.of("token", newAccessToken));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
+//        }
+//    }
+
 
 
 }

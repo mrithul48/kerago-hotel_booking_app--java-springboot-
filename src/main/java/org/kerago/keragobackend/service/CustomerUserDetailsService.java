@@ -1,6 +1,7 @@
 package org.kerago.keragobackend.service;
 
 
+import org.kerago.keragobackend.exception.ResourceNotFoundException;
 import org.kerago.keragobackend.model.Users;
 import org.kerago.keragobackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class CustomerUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users users = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        Users users = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("user not found"));
         return new User(users.getUsername(), users.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_" +users.getRole().name())));
 
     }

@@ -1,6 +1,7 @@
 package org.kerago.keragobackend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import org.kerago.keragobackend.enums.Role;
 
 public record UserRegister(
         @NotBlank(message = "username not blank")
@@ -11,5 +12,6 @@ public record UserRegister(
         String password,
         @NotBlank(message = "phone number not blank")
         String phone
+
 ) {
 }

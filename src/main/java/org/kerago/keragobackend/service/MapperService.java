@@ -42,6 +42,7 @@ public class MapperService {
 
     public Set<RoomAdminRequest> mapToRoomAdminRequest(Set<Rooms> rooms){
         return rooms.stream().map(room->new RoomAdminRequest(
+                room.getId(),
                 room.getRoomTypes(),
                 room.getRoomAvailableQuantity(),
                 room.getPricePerNight()

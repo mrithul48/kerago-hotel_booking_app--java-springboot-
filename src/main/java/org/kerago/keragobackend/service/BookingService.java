@@ -240,5 +240,54 @@ public class BookingService {
                 ).toList();
     }
 
+
+        public List<BookingResponse> getBookingById(Long id) {
+           Users users = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("user not available"));
+            return  bookingRepository
+                    .findById(users.getId())
+                    .stream().map(bookList->new BookingResponse(
+                            bookList.getId(),
+                            bookList.getUser().getUsername(),
+                            bookList.getHotel().getName(),
+                            bookList.getCheckIn(),
+                            bookList.getCheckOut(),
+                            bookList.getStatus(),
+                            bookList.getGuests(),
+                            bookList.getTotalPrice(),
+                            bookList.getBookedRooms().stream().map(room->
+                                    new RoomResponse(
+                                            room.getId(),
+                                            room.getRoomTypes(),
+                                            room.getPricePerNight(),
+                                            room.getRoomBookingQuantity()
+                                    )).toList()
+                    )).toList();
+        }
+
+    public List<BookingResponse> getBookingList(Long userId) {
+         List<Booking> booking = bookingRepository.findByUserId(userId);
+
+              return booking.stream().map(bookList->new BookingResponse(
+                        bookList.getId(),
+                        bookList.getUser().getUsername(),
+                        bookList.getHotel().getName(),
+                        bookList.getCheckIn(),
+                        bookList.getCheckOut(),
+                        bookList.getStatus(),
+                        bookList.getGuests(),
+                        bookList.getTotalPrice(),
+                        bookList.getBookedRooms().stream().map(room->
+                                new RoomResponse(
+                                        room.getId(),
+                                        room.getRoomTypes(),
+                                        room.getPricePerNight(),
+                                        room.getRoomBookingQuantity()
+                                )).toList()
+                )).toList();
+    }
+
+    public Long getCount() {
+        return hotelRepository.count();
+    }
 }
 

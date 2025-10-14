@@ -161,5 +161,8 @@ public class HotelService {
         );
     }
 
+    public Long hotelCount() {
+        return hotelRepository.count();
+    }
 }
 

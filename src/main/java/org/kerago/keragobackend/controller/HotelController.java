@@ -70,5 +70,10 @@ public class HotelController {
         return ResponseEntity.ok(hotelService.deleteHotel(id));
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> hotelCount(){
+       return ResponseEntity.ok(hotelService.hotelCount()) ;
+    }
+
 
 }

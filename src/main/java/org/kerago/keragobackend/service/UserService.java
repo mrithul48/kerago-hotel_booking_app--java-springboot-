@@ -1,6 +1,6 @@
 package org.kerago.keragobackend.service;
 
-import jakarta.validation.Valid;
+
 import org.kerago.keragobackend.dto.UserRegister;
 import org.kerago.keragobackend.dto.UserResponse;
 import org.kerago.keragobackend.dto.adminDTO.UserAdminRequest;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,6 +50,7 @@ public class UserService {
                 newUser.getId(),
                 newUser.getUsername(),
                 newUser.getEmail(),
+                newUser.getPhone(),
                 newUser.getRole()
 
         );
@@ -61,6 +62,7 @@ public class UserService {
                 users.getId(),
                 users.getUsername(),
                 users.getEmail(),
+                users.getPhone(),
                 users.getRole()
 
         );
@@ -75,15 +77,16 @@ public class UserService {
         users.setEmail(userRegister.email());
         users.setPhone(userRegister.phone());
 
+
         Users saved = userRepository.save(users);
 
-        return new UserResponse(saved.getId(),saved.getUsername(), saved.getEmail(),saved.getRole());
+        return new UserResponse(saved.getId(),saved.getUsername(), saved.getEmail(),saved.getPhone(),saved.getRole());
     }
 
 
     public List<UserResponse> getAllUser() {
         List<Users> allUsers = userRepository.findAll();
-        return allUsers.stream().map(users -> new UserResponse(users.getId(),users.getUsername(), users.getEmail(), users.getRole())).toList();
+        return allUsers.stream().map(users -> new UserResponse(users.getId(),users.getUsername(), users.getEmail(),users.getPhone(), users.getRole())).toList();
     }
 
 
@@ -96,6 +99,7 @@ public class UserService {
                 users.getId(),
                 users.getUsername(),
                 users.getEmail(),
+                users.getPhone(),
                 users.getRole()
 
         );
@@ -120,7 +124,12 @@ public class UserService {
                 saveUsers.getId(),
                 saveUsers.getUsername(),
                 saveUsers.getEmail(),
+                saveUsers.getPhone(),
                 saveUsers.getRole()
         );
+    }
+
+    public Long getCount() {
+        return userRepository.count();
     }
 }
