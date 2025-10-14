@@ -79,7 +79,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://localhost:5173",  // Vite default port
-                "https://yourdomain.com"   // Production URL
+                "http://kerago-hotel-booking-app-next-js-fr.vercel.app"   // Production URL
         ));
 
         // Allow specific HTTP methods
