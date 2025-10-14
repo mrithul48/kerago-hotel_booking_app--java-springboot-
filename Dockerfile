@@ -6,13 +6,13 @@ FROM gradle:8.8-jdk21 AS builder
 # Set working directory
 WORKDIR /build
 
-# Copy Gradle wrapper and project files
-COPY build.gradle settings.gradle ./
+# Copy gradle configuration files
+COPY gradle.properties settings.gradle build.gradle ./
 COPY gradle ./gradle
 COPY src ./src
 
-# Build the application (skip tests for faster build)
-RUN gradle clean build -x test
+# Set JAVA_HOME explicitly and build
+RUN JAVA_HOME=/usr/local/openjdk-21 gradle clean build -x test --stacktrace
 
 # --- STAGE 2: Create the Final Lightweight Image with JRE 21 ---
 
