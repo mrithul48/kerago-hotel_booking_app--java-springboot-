@@ -15,4 +15,6 @@ spring:
           auth: true
           starttls:
             enable: true
+          ssl:
+            trust: smtp-relay.brevo.com
 
