@@ -18,6 +18,15 @@ RUN gradle clean build -x test --stacktrace
 
 FROM openjdk:21-slim
 
+# Install necessary network tools for debugging (optional, can remove in production)
+RUN apt-get update && apt-get install -y \
+    iputils-ping \
+    telnet \
+    curl \
+    dnsutils \
+    netcat-traditional \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /app
 
@@ -27,5 +36,5 @@ COPY --from=builder /build/build/libs/*.jar app.jar
 # Expose the port your Spring Boot app runs on
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application with Java network debugging (remove after fixing)
+ENTRYPOINT ["java", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
