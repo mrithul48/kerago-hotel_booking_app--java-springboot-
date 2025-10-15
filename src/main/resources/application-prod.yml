@@ -5,15 +5,14 @@ spring:
     password: ${DB_PASSWORD}
 
   mail:
-    host: ${SPRING_MAIL_HOST}
-    port: ${SPRING_MAIL_PORT}
+    host: smtp-relay.brevo.com
+    port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
-          auth: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH}
+          auth: true
           starttls:
-            enable: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE}
-            ssl:
-              trust: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_TRUST}
+            enable: true
+
