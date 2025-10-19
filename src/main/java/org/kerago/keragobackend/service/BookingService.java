@@ -183,7 +183,7 @@ public class BookingService {
         );
     }
 
-
+    @Transactional
     public BookingCancelResponse cancelBooking(String username, Long bookingId) {
         Users users = userRepository.findByUsername(username)
                 .orElseThrow(()->new UsernameNotFoundException("username not found"));
@@ -195,8 +195,10 @@ public class BookingService {
             throw new UsernameNotFoundException("You are not allowed to cancel this booking");
         }
 
+        Hotel hotel = booking.getHotel();
+
         for (Rooms bookedRoom:booking.getBookedRooms()){
-            Hotel hotel = booking.getHotel();
+
             Rooms hotelRoom = hotel.getRooms()
                     .stream().filter(r->r.getRoomTypes().equals(bookedRoom.getRoomTypes()))
                     .findFirst()
@@ -206,7 +208,7 @@ public class BookingService {
             );
         }
 
-
+        hotelRepository.save(hotel);
         booking.setStatus(Status.CANCELLED);
         bookingRepository.save(booking);
 
@@ -220,7 +222,7 @@ public class BookingService {
     }
 
     public List<BookingResponse> getAllBooking() {
-        return bookingRepository.findAll().stream().filter(b -> b.getStatus() != Status.CANCELLED)
+        return bookingRepository.findAll().stream()
                 .map(r ->
                         new BookingResponse(
                                 r.getId(),
