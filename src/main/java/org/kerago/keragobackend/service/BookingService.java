@@ -53,7 +53,9 @@ public class BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
         // Check hotel availability
-        boolean unAvailable = hotel.getRooms().stream().allMatch(rooms -> rooms.getRoomAvailableQuantity() <= 0);
+        boolean unAvailable = hotel.getRooms()
+                .stream()
+                .allMatch(rooms -> rooms.getRoomAvailableQuantity() <= 0);
         if (unAvailable) {
             throw new ResourceNotFoundException("no room available in hotel");
         }

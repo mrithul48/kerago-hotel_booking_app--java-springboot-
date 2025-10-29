@@ -4,6 +4,7 @@ package org.kerago.keragobackend.service;
 import jakarta.transaction.Transactional;
 import org.kerago.keragobackend.dto.HotelRequest;
 import org.kerago.keragobackend.dto.HotelResponse;
+import org.kerago.keragobackend.dto.ImageResponse;
 import org.kerago.keragobackend.dto.adminDTO.RoomAdminRequest;
 import org.kerago.keragobackend.exception.ResourceNotFoundException;
 import org.kerago.keragobackend.model.Hotel;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -163,6 +165,37 @@ public class HotelService {
 
     public Long hotelCount() {
         return hotelRepository.count();
+    }
+
+    public List<HotelResponse> searchHotel(String hotelname) {
+        if (hotelname == null || hotelname.trim().isEmpty()) {
+            throw new IllegalArgumentException("Search text cannot be empty");
+        }
+        List<HotelResponse> result = hotelRepository.findAll().stream()
+                .filter(search -> search.getName().toLowerCase().trim().contains(hotelname.toLowerCase().trim()))
+                .map(hotel -> new HotelResponse(
+                        hotel.getId(),
+                        hotel.getName(),
+                        hotel.getLocation(),
+                        hotel.getDescription(),
+                        hotel.getRooms().stream().map(rooms -> new RoomAdminRequest(
+                                        rooms.getId(),
+                                        rooms.getRoomTypes(),
+                                        rooms.getRoomAvailableQuantity(),
+                                        rooms.getPricePerNight()
+                                ))
+                                .collect(Collectors.toSet()),
+                        hotel.getImagesList().stream().map(image -> new ImageResponse(
+                                image.getId(),
+                                image.getUrl()
+                        )).toList()
+                ))
+                .toList();
+    if(result.isEmpty()){
+        throw new ResourceNotFoundException("hotel not found");
+    }
+    return result;
+
     }
 }
 

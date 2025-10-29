@@ -50,11 +50,11 @@ public class AuthController {
             String role = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .findFirst().orElse("ROLE_USER");
+
             //create refresh token
             String refreshTokenString = jwtUtil.generateRefreshToken(userDetails);
 
             RefreshToken refreshToken = refreshTokenService.refreshToken(refreshTokenString,userDetails);
-
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
@@ -84,7 +84,5 @@ public class AuthController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
 //        }
 //    }
-
-
 
 }

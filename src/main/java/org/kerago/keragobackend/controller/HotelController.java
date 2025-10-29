@@ -75,5 +75,9 @@ public class HotelController {
        return ResponseEntity.ok(hotelService.hotelCount()) ;
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<HotelResponse>> searchHotel(@RequestParam String hotelname){
+        return ResponseEntity.ok(hotelService.searchHotel(hotelname));
+    }
 
 }
